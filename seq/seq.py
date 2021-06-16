@@ -16,7 +16,15 @@ def bz_2d_coef (d,P,t):
     for i in range(d-1):
         J.append(special.binom(d-2,i)*(t**i)*(1-t)**(d-2-i)*(P[i+2]-2*P[i+1]+P[i]))
     return np.sum(np.array(J,dtype=np.float64))*d*(d-1)
+def curvt(d,P,T):
+   bp=np.array([[bz_coef(d,P[0],x) for x in T],[bz_coef(d,P[1],x) for x in T]])
+   b1dp=np.array([[bz_1d_coef(d,P[0],x) for x in T],[bz_1d_coef(d,P[1],x) for x in T]])
+   b1dp=np.array([[bz_2d_coef(d,P[0],x) for x in T],[bz_2d_coef(d,P[1],x) for x in T]])
+   return bp
 P=np.array([0,0.55,11.8,16.5,22,24.5,18],dtype=np.float64)
+N=210
+d=6
+
 print(bz_coef(6,P,0.4))
 print(bz_1d_coef(6,P,0.4))
 print(bz_2d_coef(6,P,0.4))
