@@ -3,6 +3,7 @@ import scipy as sp
 from scipy import special
 from matplotlib import pyplot as plt
 import yaml
+from h20 import load_params
 def bz_coef (d,P,t):
     J=[]
     for i in range(d+1):
@@ -23,11 +24,12 @@ def curvt(d,P,T):
    b1dp=np.array([[bz_1d_coef(d,P[0],x) for x in T],[bz_1d_coef(d,P[1],x) for x in T]])
    b2dp=np.array([[bz_2d_coef(d,P[0],x) for x in T],[bz_2d_coef(d,P[1],x) for x in T]])
    return np.sqrt(np.abs(b2dp[1]*b1dp[0] - b2dp[0]*b1dp[1])/np.sqrt(b1dp[0]**2+b1dp[1]**2))
-P=np.array([[0,0.55,11.8,16.5,22,24.5,18],[0.0,6.9,9.2,6.25,3.2,0,-1.0]],dtype=np.float64)
-N=10000
-d=6
-In=0.0
-End=1.0
+lp=load_params()
+P=np.array(lp.P,dtype=np.float64)
+N=lp.N
+d=lp.d
+In=lp.st
+End=lp.end
 tpt=np.linspace(In,End,N)
 dt=tpt[1]-tpt[0]
 cur=curvt(d,P,tpt)
@@ -38,7 +40,7 @@ intf=np.flip(np.append(reverse,0.0))
 insm=np.array([np.sum(intf[:x]) for x in range(1,N+1)],dtype=np.float64)
 print(intf)
 print(insm)
-er=0.0001
+er=lp.er
 InMx=(insm[len(insm)-1])
 m=np.int(np.ceil(InMx*1/np.sqrt(8*er))+1)
 print(m)
@@ -57,4 +59,5 @@ print(insm[len(insm)-1])
 optPt=np.array([[bz_coef(d,P[0],x) for x in topt],[bz_coef(d,P[1],x) for x in topt]],dtype=np.float64)
 print(optPt)
 plt.plot(optPt[0],optPt[1])
+plt.gca().set_aspect('equal', adjustable='box')
 plt.show()
